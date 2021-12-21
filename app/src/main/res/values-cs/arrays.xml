@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="color_theme_entries">
+        <item>Standardní</item>
+        <item>Silný kontrast</item>
+    </string-array>
+    <string-array name="screen_orientation_entries">
+        <item>Na šířku (automaticky)</item>
+        <item>Uzamčené na šířku</item>
+        <item>Uzamčené na šířku (obráceně)</item>
+    </string-array>
+    <string-array name="playback_speed_entries">
+        <item>Velmi rychlé</item>
+        <item>Rychlé</item>
+        <item>Normální</item>
+        <item>Střední</item>
+        <item>Pomalé</item>
+        <item>Velmi pomalé</item>
+    </string-array>
+</resources>
