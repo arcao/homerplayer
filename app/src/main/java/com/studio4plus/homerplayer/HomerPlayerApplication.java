@@ -11,7 +11,6 @@ import androidx.multidex.MultiDexApplication;
 
 import com.studio4plus.homerplayer.analytics.AnalyticsTracker;
 import com.studio4plus.homerplayer.crashreporting.CrashReporting;
-import com.studio4plus.homerplayer.ui.HomeActivity;
 import com.studio4plus.homerplayer.service.NotificationUtil;
 
 import javax.inject.Inject;
@@ -19,13 +18,17 @@ import javax.inject.Inject;
 public class HomerPlayerApplication extends MultiDexApplication {
 
     private static final String AUDIOBOOKS_DIRECTORY = "AudioBooks";
-
+    @Inject
+    public MediaStoreUpdateObserver mediaStoreUpdateObserver;
+    @Inject
+    public GlobalSettings globalSettings;
+    @Inject
+    public AnalyticsTracker analyticsTracker;  // Force creation of the tracker early.
     private ApplicationComponent component;
 
-
-    @Inject public MediaStoreUpdateObserver mediaStoreUpdateObserver;
-    @Inject public GlobalSettings globalSettings;
-    @Inject public AnalyticsTracker analyticsTracker;  // Force creation of the tracker early.
+    public static ApplicationComponent getComponent(Context context) {
+        return ((HomerPlayerApplication) context.getApplicationContext()).component;
+    }
 
     @Override
     public void onCreate() {
@@ -52,7 +55,7 @@ public class HomerPlayerApplication extends MultiDexApplication {
         getContentResolver().registerContentObserver(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreUpdateObserver);
 
-        HomeActivity.setEnabled(this, globalSettings.isAnyKioskModeEnabled());
+        //HomeActivity.setEnabled(this, true);
 
         if (Build.VERSION.SDK_INT >= 26)
             NotificationUtil.API26.registerPlaybackServiceChannel(this);
@@ -63,10 +66,6 @@ public class HomerPlayerApplication extends MultiDexApplication {
         super.onTerminate();
         getContentResolver().unregisterContentObserver(mediaStoreUpdateObserver);
         mediaStoreUpdateObserver = null;
-    }
-
-    public static ApplicationComponent getComponent(Context context) {
-        return ((HomerPlayerApplication) context.getApplicationContext()).component;
     }
 
     private boolean isUpdate(long previousVersionCode, long currentVersionCode) {

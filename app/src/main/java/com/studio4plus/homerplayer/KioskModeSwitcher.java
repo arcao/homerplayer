@@ -12,7 +12,6 @@ import android.os.Build;
 
 import com.google.common.base.Preconditions;
 import com.studio4plus.homerplayer.events.KioskModeChanged;
-import com.studio4plus.homerplayer.ui.HomeActivity;
 import com.studio4plus.homerplayer.ui.MainActivity;
 
 import javax.inject.Inject;
@@ -28,7 +27,7 @@ public class KioskModeSwitcher {
 
     @Inject
     KioskModeSwitcher(Context applicationContext, GlobalSettings globalSettings,
-                             EventBus eventBus) {
+                      EventBus eventBus) {
         this.context = applicationContext;
         this.globalSettings = globalSettings;
         this.eventBus = eventBus;
@@ -56,9 +55,9 @@ public class KioskModeSwitcher {
         if (globalSettings.isFullKioskModeEnabled() & enable)
             return;
 
-        HomeActivity.setEnabled(context, enable);
         if (enable)
             triggerHomeAppSelectionIfNecessary();
+
         eventBus.post(new KioskModeChanged(KioskModeChanged.Type.SIMPLE, enable));
     }
 
