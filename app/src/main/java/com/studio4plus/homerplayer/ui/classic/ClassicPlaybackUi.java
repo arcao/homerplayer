@@ -43,8 +43,8 @@ public class ClassicPlaybackUi implements PlaybackUi {
     }
 
     @Override
-    public void onPlaybackProgressed(long playbackPositionMs) {
-        fragment.onPlaybackProgressed(playbackPositionMs);
+    public void onPlaybackProgressed(long playbackPositionMs, String fileTitle) {
+        fragment.onPlaybackProgressed(playbackPositionMs, fileTitle);
     }
 
     @Override

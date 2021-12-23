@@ -45,12 +45,15 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
     private Button stopButton;
     private ImageButton rewindButton;
     private ImageButton ffButton;
+    private TextView fileTitleView;
     private TextView elapsedTimeView;
     private TextView elapsedTimeRewindFFView;
     private VolumeIndicatorShowController volumeIndicatorShowController;
     private VolumeChangeIndicator volumeIndicator;
     private RewindFFHandler rewindFFHandler;
     private Animator elapsedTimeRewindFFViewAnimation;
+
+    private String lastFileTitle = "";
 
     private @Nullable UiControllerPlayback controller;
 
@@ -71,23 +74,19 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
             controller.stopPlayback();
         });
 
+        fileTitleView = view.findViewById(R.id.fileTitle);
+
         elapsedTimeView = view.findViewById(R.id.elapsedTime);
         elapsedTimeRewindFFView = view.findViewById(R.id.elapsedTimeRewindFF);
 
-        elapsedTimeView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(
-                    View v,
-                    int left, int top, int right, int bottom,
-                    int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                RelativeLayout.LayoutParams params =
-                        (RelativeLayout.LayoutParams) elapsedTimeRewindFFView.getLayoutParams();
-                params.leftMargin = left;
-                params.topMargin = top;
-                params.width = right - left;
-                params.height = bottom - top;
-                elapsedTimeRewindFFView.setLayoutParams(params);
-            }
+        elapsedTimeView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            RelativeLayout.LayoutParams params =
+                    (RelativeLayout.LayoutParams) elapsedTimeRewindFFView.getLayoutParams();
+            params.leftMargin = left;
+            params.topMargin = top;
+            params.width = right - left;
+            params.height = bottom - top;
+            elapsedTimeRewindFFView.setLayoutParams(params);
         });
 
         // Don't let any events "through" overlays.
@@ -153,7 +152,8 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
         rewindFFHandler.onStopping();
     }
 
-    void onPlaybackProgressed(long playbackPositionMs) {
+    void onPlaybackProgressed(long playbackPositionMs, String fileTitle) {
+        lastFileTitle = fileTitle;
         onTimerUpdated(playbackPositionMs);
         enableUiOnStart();
     }
@@ -263,8 +263,11 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
 
     @Override
     public void onTimerUpdated(long displayTimeMs) {
-        elapsedTimeView.setText(elapsedTime(displayTimeMs));
-        elapsedTimeRewindFFView.setText(elapsedTime(displayTimeMs));
+        String elapsedTime = elapsedTime(displayTimeMs);
+
+        fileTitleView.setText(lastFileTitle);
+        elapsedTimeView.setText(elapsedTime);
+        elapsedTimeRewindFFView.setText(elapsedTime);
     }
 
     @Override

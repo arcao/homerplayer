@@ -10,10 +10,10 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="@dimen/bookListTextSize"
-        android:singleLine="false"
+        android:layout_above="@+id/startButton"
         android:gravity="center"
-        android:layout_above="@+id/startButton"/>
+        android:singleLine="false"
+        android:textSize="@dimen/bookListTextSize" />
 
     <TextView
         android:id="@+id/copyBooksInstruction"
@@ -27,9 +27,9 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/startButton"
         style="@style/buttonStartStop"
-        android:theme="@style/buttonStartOverlay"
-        android:text="@string/button_start"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:text="@string/button_start"
+        android:theme="@style/buttonStartOverlay" />
 
 </RelativeLayout>

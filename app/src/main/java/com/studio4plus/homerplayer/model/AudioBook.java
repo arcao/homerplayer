@@ -40,6 +40,7 @@ public class AudioBook {
     public AudioBook(FileSet fileSet) {
         this.fileSet = fileSet;
         this.lastPosition = new Position(0, 0);
+
         this.fileDurations = new ArrayList<>(fileSet.files.length);
     }
 
@@ -57,6 +58,32 @@ public class AudioBook {
 
     public Position getLastPosition() {
         return lastPosition;
+    }
+
+    public String getLastFileName() {
+        File[] files = fileSet.files;
+
+        if (files.length <= 0) {
+            return "";
+        }
+
+        return fileToAudioFileName(files[lastPosition.fileIndex]);
+    }
+
+    public String[] getFileNames() {
+        File[] files = fileSet.files;
+
+        String[] names = new String[files.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = fileToAudioFileName(files[i]);
+        }
+
+        return names;
+    }
+
+    public void seekToFileStart(int fileIndex) {
+        lastPosition = new Position(fileIndex, 0);
+        notifyUpdateObserver();
     }
 
     public long getLastPositionTime(long lastFileSeekPosition) {
@@ -201,5 +228,16 @@ public class AudioBook {
     private void notifyUpdateObserver() {
         if (updateObserver != null)
             updateObserver.onAudioBookStateUpdated(this);
+    }
+
+    private static String fileToAudioFileName(File file) {
+        String fileName = file.getName();
+
+        int lastDotPos = fileName.lastIndexOf('.');
+        if (lastDotPos != -1) {
+            fileName = fileName.substring(0, lastDotPos);
+        }
+
+        return fileName.replace('_', ' ');
     }
 }

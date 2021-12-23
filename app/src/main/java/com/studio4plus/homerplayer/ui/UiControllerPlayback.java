@@ -3,6 +3,7 @@ package com.studio4plus.homerplayer.ui;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media.AudioManagerCompat;
@@ -28,9 +29,12 @@ public class UiControllerPlayback {
     private static final String TAG = "UiControllerPlayback";
 
     static class Factory {
-        private final @NonNull EventBus eventBus;
-        private final @NonNull AnalyticsTracker analyticsTracker;
-        private final @NonNull AudioManager audioManager;
+        private final @NonNull
+        EventBus eventBus;
+        private final @NonNull
+        AnalyticsTracker analyticsTracker;
+        private final @NonNull
+        AudioManager audioManager;
 
         @Inject
         Factory(@NonNull EventBus eventBus,
@@ -48,15 +52,22 @@ public class UiControllerPlayback {
         }
     }
 
-    private final @NonNull EventBus eventBus;
-    private final @NonNull AnalyticsTracker analyticsTracker;
-    private final @NonNull Handler mainHandler;
-    private final @NonNull AudioManager audioManager;
-    private final @NonNull PlaybackService playbackService;
-    private final @NonNull PlaybackUi ui;
+    private final @NonNull
+    EventBus eventBus;
+    private final @NonNull
+    AnalyticsTracker analyticsTracker;
+    private final @NonNull
+    Handler mainHandler;
+    private final @NonNull
+    AudioManager audioManager;
+    private final @NonNull
+    PlaybackService playbackService;
+    private final @NonNull
+    PlaybackUi ui;
 
     // Non-null only when rewinding.
-    private @Nullable FFRewindController ffRewindController;
+    private @Nullable
+    FFRewindController ffRewindController;
 
     private UiControllerPlayback(@NonNull EventBus eventBus,
                                  @NonNull AnalyticsTracker analyticsTracker,
@@ -75,7 +86,7 @@ public class UiControllerPlayback {
         eventBus.register(this);
 
         if (playbackService.getState() == PlaybackService.State.PLAYBACK) {
-            ui.onPlaybackProgressed(playbackService.getCurrentTotalPositionMs());
+            ui.onPlaybackProgressed(playbackService.getCurrentTotalPositionMs(), playbackService.getAudioBookBeingPlayed().getLastFileName());
         }
     }
 
@@ -105,7 +116,8 @@ public class UiControllerPlayback {
 
     @SuppressWarnings({"UnusedParameters", "UnusedDeclaration"})
     public void onEvent(PlaybackProgressedEvent event) {
-        ui.onPlaybackProgressed(event.playbackPositionMs);
+        ui.onPlaybackProgressed(event.playbackPositionMs, event.audioBook.getLastFileName());
+
     }
 
     public void pauseForRewind() {
@@ -175,13 +187,15 @@ public class UiControllerPlayback {
     }
 
     private static class FFRewindController implements FFRewindTimer.Observer {
-        private static final int[] SPEED_LEVEL_SPEEDS = { 250, 100, 25  };
-        private static final long[] SPEED_LEVEL_THRESHOLDS = { 15_000, 90_000, Long.MAX_VALUE };
+        private static final int[] SPEED_LEVEL_SPEEDS = {250, 100, 25};
+        private static final long[] SPEED_LEVEL_THRESHOLDS = {15_000, 90_000, Long.MAX_VALUE};
         private static final PlaybackUi.SpeedLevel[] SPEED_LEVELS =
-                {PlaybackUi.SpeedLevel.REGULAR, PlaybackUi.SpeedLevel.FAST, PlaybackUi.SpeedLevel.FASTEST };
+                {PlaybackUi.SpeedLevel.REGULAR, PlaybackUi.SpeedLevel.FAST, PlaybackUi.SpeedLevel.FASTEST};
 
-        private final @NonNull PlaybackUi ui;
-        private final @NonNull FFRewindTimer timer;
+        private final @NonNull
+        PlaybackUi ui;
+        private final @NonNull
+        FFRewindTimer timer;
 
         private long startTimeNano;
         private long initialDisplayTimeMs;

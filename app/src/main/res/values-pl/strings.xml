@@ -69,4 +69,5 @@
     <string name="samplesDownloadErrorTitle">Błąd</string>
     <string name="samplesDownloadProgressTitle">Pobieranie…</string>
     <string name="samplesDownloadNotificationTitle">Przykładowe audiobooki dla Homer Playera</string>
+    <string name="playback_loading">Ładowanie książki…</string>
 </resources>

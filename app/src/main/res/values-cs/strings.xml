@@ -69,4 +69,5 @@
     <string name = "samplesDownloadErrorTitle">Chyba</string>
     <string name = "samplesDownloadProgressTitle">Stahování…</string>
     <string name = "samplesDownloadNotificationTitle">Ukázky audioknih pro Homer Player</string>
+    <string name="playback_loading">Načítám knihu…</string>
 </resources>

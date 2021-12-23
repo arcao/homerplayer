@@ -12,7 +12,7 @@ public interface PlaybackUi {
     }
 
     void initWithController(@NonNull UiControllerPlayback controller);
-    void onPlaybackProgressed(long playbackPositionMs);
+    void onPlaybackProgressed(long playbackPositionMs, String fileTitle);
     void onPlaybackStopping();
 
     /**

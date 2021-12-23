@@ -3,6 +3,7 @@
 
     <style name="buttonStartOverlay" parent="ThemeOverlay.AppCompat">
         <item name="android:textColor">?attr/buttonStartTextColor</item>
+        <item name="android:textSize">@dimen/buttonTextSize</item>
         <item name="colorAccent">?attr/buttonStartBackground</item>
         <item name="colorButtonNormal">?attr/buttonStartBackground</item>
         <item name="android:paddingLeft">@dimen/buttonPaddingHoriz</item>
@@ -11,6 +12,7 @@
 
     <style name="buttonStopOverlay" parent="ThemeOverlay.AppCompat">
         <item name="android:textColor">?attr/buttonStopTextColor</item>
+        <item name="android:textSize">@dimen/buttonTextSize</item>
         <item name="colorAccent">?attr/buttonStopBackground</item>
         <item name="colorButtonNormal">?attr/buttonStopBackground</item>
     </style>
