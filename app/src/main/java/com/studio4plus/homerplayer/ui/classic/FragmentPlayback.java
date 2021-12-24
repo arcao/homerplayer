@@ -5,12 +5,6 @@ import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Bundle;
-
-import androidx.annotation.CallSuper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +13,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.common.base.Preconditions;
 import com.studio4plus.homerplayer.GlobalSettings;
@@ -41,6 +40,8 @@ import io.codetail.animation.ViewAnimationUtils;
 
 public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer {
 
+    @Inject
+    public GlobalSettings globalSettings;
     private View view;
     private Button stopButton;
     private ImageButton rewindButton;
@@ -48,16 +49,14 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
     private TextView fileTitleView;
     private TextView elapsedTimeView;
     private TextView elapsedTimeRewindFFView;
+    private Button buttonElapsedTime;
     private VolumeIndicatorShowController volumeIndicatorShowController;
     private VolumeChangeIndicator volumeIndicator;
     private RewindFFHandler rewindFFHandler;
     private Animator elapsedTimeRewindFFViewAnimation;
-
     private String lastFileTitle = "";
-
-    private @Nullable UiControllerPlayback controller;
-
-    @Inject public GlobalSettings globalSettings;
+    private @Nullable
+    UiControllerPlayback controller;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -123,6 +122,9 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
         elapsedTimeRewindFFViewAnimation =
                 AnimatorInflater.loadAnimator(view.getContext(), R.animator.bounce);
         elapsedTimeRewindFFViewAnimation.setTarget(elapsedTimeRewindFFView);
+
+        buttonElapsedTime = view.findViewById(R.id.buttonElapsedTime);
+        buttonElapsedTime.setOnClickListener(v -> new FragmentFileSelect().show(requireActivity().getSupportFragmentManager()));
 
         return view;
     }
@@ -191,6 +193,46 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
         controller.showVolume();
     }
 
+    private String elapsedTime(long elapsedMs) {
+        long hours = TimeUnit.MILLISECONDS.toHours(elapsedMs);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedMs) % 60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedMs) % 60;
+
+        return getString(R.string.playback_elapsed_time, hours, minutes, seconds);
+    }
+
+    private void showHintIfNecessary() {
+        if (isResumed() && isVisible()) {
+            if (!globalSettings.flipToStopHintShown()) {
+                HintOverlay overlay = new HintOverlay(
+                        view, R.id.flipToStopHintOverlayStub, R.string.hint_flip_to_stop, R.drawable.hint_flip_to_stop);
+                overlay.show();
+                globalSettings.setFlipToStopHintShown();
+            }
+        }
+    }
+
+    @Override
+    public void onTimerUpdated(long displayTimeMs) {
+        String elapsedTime = elapsedTime(displayTimeMs);
+
+        fileTitleView.setText(lastFileTitle);
+        elapsedTimeView.setText(elapsedTime);
+        elapsedTimeRewindFFView.setText(elapsedTime);
+        //buttonElapsedTime.setText(elapsedTime);
+    }
+
+    @Override
+    public void onTimerLimitReached() {
+        if (elapsedTimeRewindFFView.getVisibility() == View.VISIBLE) {
+            elapsedTimeRewindFFViewAnimation.start();
+        }
+    }
+
+    void setController(@NonNull UiControllerPlayback controller) {
+        this.controller = controller;
+    }
+
     private static class VolumeIndicatorShowController {
         private static final long SHOW_HIDE_DURATION_MS = 500;
         private static final long AUTO_HIDE_DURATION_MS = 3000;
@@ -242,43 +284,28 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
         }
     }
 
-    private String elapsedTime(long elapsedMs) {
-        long hours = TimeUnit.MILLISECONDS.toHours(elapsedMs);
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedMs) % 60;
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedMs) % 60;
+    private static abstract class AnimatorListener extends SimpleAnimatorListener {
+        private boolean isCancelled = false;
 
-        return getString(R.string.playback_elapsed_time, hours, minutes, seconds);
-    }
-
-    private void showHintIfNecessary() {
-        if (isResumed() && isVisible()) {
-            if (!globalSettings.flipToStopHintShown()) {
-                HintOverlay overlay = new HintOverlay(
-                        view, R.id.flipToStopHintOverlayStub, R.string.hint_flip_to_stop, R.drawable.hint_flip_to_stop);
-                overlay.show();
-                globalSettings.setFlipToStopHintShown();
+        @Override
+        public final void onAnimationEnd(Animator animator) {
+            if (!isCancelled) {
+                onAnimationCompleted();
+                onCompletedOrCancelled();
             }
         }
-    }
 
-    @Override
-    public void onTimerUpdated(long displayTimeMs) {
-        String elapsedTime = elapsedTime(displayTimeMs);
-
-        fileTitleView.setText(lastFileTitle);
-        elapsedTimeView.setText(elapsedTime);
-        elapsedTimeRewindFFView.setText(elapsedTime);
-    }
-
-    @Override
-    public void onTimerLimitReached() {
-        if (elapsedTimeRewindFFView.getVisibility() == View.VISIBLE) {
-            elapsedTimeRewindFFViewAnimation.start();
+        @CallSuper
+        @Override
+        public void onAnimationCancel(Animator animator) {
+            isCancelled = true;
+            onCompletedOrCancelled();
         }
-    }
 
-    void setController(@NonNull UiControllerPlayback controller) {
-        this.controller = controller;
+        protected abstract void onCompletedOrCancelled();
+
+        protected void onAnimationCompleted() {
+        }
     }
 
     private class RewindFFHandler implements PressReleaseDetector.Listener {
@@ -397,27 +424,5 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
 
             return animator;
         }
-    }
-
-    private static abstract class AnimatorListener extends SimpleAnimatorListener {
-        private boolean isCancelled = false;
-
-        @Override
-        public final void onAnimationEnd(Animator animator) {
-            if (!isCancelled) {
-                onAnimationCompleted();
-                onCompletedOrCancelled();
-            }
-        }
-
-        @CallSuper
-        @Override
-        public void onAnimationCancel(Animator animator) {
-            isCancelled = true;
-            onCompletedOrCancelled();
-        }
-
-        protected abstract void onCompletedOrCancelled();
-        protected void onAnimationCompleted() {}
     }
 }

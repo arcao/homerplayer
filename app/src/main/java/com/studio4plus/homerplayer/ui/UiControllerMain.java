@@ -221,6 +221,30 @@ public class UiControllerMain implements ServiceConnection {
         return audioBookManager.getCurrentBook();
     }
 
+    public void selectFile(int fileIndex) {
+        if (playbackService == null) {
+            return;
+        }
+
+        playbackService.selectFile(fileIndex);
+    }
+
+    public String[] getBookFileNames() {
+        if (playbackService == null) {
+            return new String[0];
+        }
+
+        return playbackService.getAudioBookBeingPlayed().getFileNames();
+    }
+
+    public int getPlayedFileIndex() {
+        if (playbackService == null) {
+            return 0;
+        }
+
+        return playbackService.getAudioBookBeingPlayed().getLastPosition().fileIndex;
+    }
+
     private void changeState(StateFactory newStateFactory) {
         if (!isRunning)
             CrashReporting.log(Log.DEBUG, TAG, "UI(!): changing state while activity is paused");

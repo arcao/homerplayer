@@ -6,7 +6,7 @@
     <string name="demo_samples_service_notification_install">Instalacja przykładowych audiobooków</string>
     <string name="playback_service_notification">Odtwarzanie audiobooka</string>
     <string name="hint_browsing">Przeciągnij\naby przeglądać książki</string>
-    <string name="hint_settings">Ustawienia:\ntapnij 5 razy</string>
+    <string name="hint_settings">Ustawienia:\ntapnij 10 razy</string>
     <string name="hint_flip_to_stop">Odłóż ekranem do dołu aby zatrzymać</string>
     <string name="back_suppressed_by_kiosk">Wyjście zablokowane (tryb kiosku włączony)</string>
     <string name="notificationChannelPlayback">Odtwarzanie dźwięku</string>
@@ -70,4 +70,6 @@
     <string name="samplesDownloadProgressTitle">Pobieranie…</string>
     <string name="samplesDownloadNotificationTitle">Przykładowe audiobooki dla Homer Playera</string>
     <string name="playback_loading">Ładowanie książki…</string>
+    <string name="button_back">Powrót</string>
+    <string name="file_select_title">Wybierz plik</string>
 </resources>

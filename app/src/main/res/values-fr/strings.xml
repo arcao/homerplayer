@@ -7,7 +7,7 @@
     <string name="pref_ff_rewind_sound_summary_on">Activé</string>
     <string name="noBooksMessage">Il n\'y a pas de livres audio sur l\'appareil</string>
     <string name="copyBooksInstructionMessage">Copiez les livres audio dans le dossier &lt;b>/%s&lt;/b></string>
-    <string name="hint_settings">Tapotez 5 fois pour afficher les paramètres</string>
+    <string name="hint_settings">Tapotez 10 fois pour afficher les paramètres</string>
     <string name="settings_title">Paramètres</string>
     <string name="pref_help_faq_title">Aide : Questions Fréquement posées</string>
     <string name="button_start">Démarrer</string>
@@ -70,4 +70,6 @@
     <string name="pref_volume_controls_summary_off">Désactivé</string>
     <string name="pref_volume_controls">Boutons de réglages du volume sur l\'écran de lecture</string>
     <string name="playback_loading">Chargement du livre…</string>
+    <string name="button_back">Retour</string>
+    <string name="file_select_title">Sélectionner un fichier</string>
 </resources>

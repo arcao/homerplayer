@@ -5,6 +5,7 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
         <item name="volumeChangeIndicatorStyle">@style/Widget.VolumeChangeIndicator</item>
+        <item name="android:listDivider">@drawable/divider</item>
     </style>
 
     <style name="AppThemeClassic" parent="AppTheme.Base">
@@ -22,6 +23,8 @@
         <item name="buttonVolumeBackground">@color/classicButtonVolumeBackground</item>
         <item name="ffRewindFillBackground">@color/classicFfRewindFillBackground</item>
         <item name="volumeOverlayBackground">@drawable/classic_volume_indicator_background</item>
+        <item name="buttonSelectFileBackground">@color/classicButtonSelectFileBackground</item>
+        <item name="buttonSelectFileTextColor">@color/classicButtonVolumeTextColor</item>
 
         <item name="bookVividYellowBackground">@color/bookVividYellow</item>
         <item name="bookVividYellowTextColor">@android:color/black</item>
@@ -54,6 +57,8 @@
         <item name="buttonVolumeBackground">@color/highContrastButtonVolumeBackground</item>
         <item name="ffRewindFillBackground">@color/highContrastFfRewindFillBackground</item>
         <item name="volumeOverlayBackground">@drawable/high_contrast_volume_indicator_background</item>
+        <item name="buttonSelectFileBackground">@color/highContrastButtonSelectFileBackground</item>
+        <item name="buttonSelectFileTextColor">@color/highContrastPlaybackTextColor</item>
 
         <item name="bookVividYellowBackground">@android:color/black</item>
         <item name="bookVividYellowTextColor">@android:color/white</item>

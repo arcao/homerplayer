@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MultitapTouchListener implements View.OnTouchListener {
 
-    private static final int TRIGGER_TAP_COUNT = 5;
+    private static final int TRIGGER_TAP_COUNT = 10;
 
     public interface Listener {
         void onMultiTap();
@@ -108,7 +108,7 @@ public class MultitapTouchListener implements View.OnTouchListener {
     }
 
     private void displayPrompt(int tapNumber) {
-        if (tapNumber >= 2) {
+        if (tapNumber >= 5) {
             String message = context.getResources().getString(
                     R.string.multi_tap_prompt, TRIGGER_TAP_COUNT - tapNumber);
             hidePrompt();

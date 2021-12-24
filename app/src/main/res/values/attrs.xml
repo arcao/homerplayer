@@ -12,6 +12,8 @@
     <attr name="buttonFFRewindBackground" format="reference"/>
     <attr name="buttonVolumeTextColor" format="color|reference"/>
     <attr name="buttonVolumeBackground" format="color|reference"/>
+    <attr name="buttonSelectFileBackground" format="color|reference"/>
+    <attr name="buttonSelectFileTextColor" format="color|reference"/>
     <attr name="ffRewindFillBackground" format="reference"/>
     <attr name="volumeOverlayBackground" format="reference"/>
 

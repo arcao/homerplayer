@@ -19,6 +19,7 @@ import com.studio4plus.homerplayer.ui.classic.ClassicPlaybackUi;
 import com.studio4plus.homerplayer.ui.classic.FragmentBookItem;
 import com.studio4plus.homerplayer.ui.classic.ClassicBookList;
 import com.studio4plus.homerplayer.ui.classic.ClassicNoBooksUi;
+import com.studio4plus.homerplayer.ui.classic.FragmentFileSelect;
 import com.studio4plus.homerplayer.ui.settings.KioskSettingsFragment;
 import com.studio4plus.homerplayer.ui.settings.MainSettingsFragment;
 import com.studio4plus.homerplayer.ui.settings.PlaybackSettingsFragment;

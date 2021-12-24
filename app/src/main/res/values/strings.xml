@@ -8,7 +8,7 @@
     <string name="device_admin_label" translatable="false">Homer Player</string>
     <string name="device_admin_description" translatable="false">Homer Player</string>
     <string name="hint_browsing">Swipe\nto browse titles</string>
-    <string name="hint_settings">Tap 5x\nfor settings</string>
+    <string name="hint_settings">Tap 10x\nfor settings</string>
     <string name="hint_flip_to_stop">Put the device with screen down to stop</string>
     <string name="back_suppressed_by_kiosk">Exit blocked (kiosk mode is enabled)</string>
     <string name="notificationChannelPlayback">Audio playback</string>
@@ -78,4 +78,6 @@
     <string name="samplesDownloadProgressTitle">Downloading…</string>
     <string name="samplesDownloadNotificationTitle">Audiobook samples for Homer Player</string>
     <string name="playback_loading">Loading book…</string>
+    <string name="button_back">Back</string>
+    <string name="file_select_title">Select file</string>
 </resources>

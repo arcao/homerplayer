@@ -29,4 +29,10 @@
         <item name="colorAccent">?attr/buttonVolumeBackground</item>
     </style>
 
+    <style name="buttonSelectFileOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="android:textColor">?attr/buttonSelectFileTextColor</item>
+        <item name="colorButtonNormal">?attr/buttonSelectFileBackground</item>
+        <item name="colorAccent">?attr/buttonSelectFileBackground</item>
+    </style>
+
 </resources>

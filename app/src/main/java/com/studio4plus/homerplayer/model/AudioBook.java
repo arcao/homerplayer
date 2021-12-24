@@ -222,7 +222,8 @@ public class AudioBook {
     }
 
     private static String directoryToTitle(String directory) {
-        return directory.replace('_', ' ');
+        return directory.replace('_', ' ').replace(" (", "\n(")
+                .replace(" [", "\n[");
     }
 
     private void notifyUpdateObserver() {

@@ -6,7 +6,7 @@
     <string name = "demo_samples_service_notification_install">Instalace ukázkových audioknih</string>
     <string name = "playback_service_notification">Přehrávání audioknihy</string>
     <string name = "hint_browsing">"Swypnutím můžete procházet knihy "</string>
-    <string name = "hint_settings">Nastavení: klepněte 5krát</string>
+    <string name = "hint_settings">Klepněte 5krát\npro nastavení.</string>
     <string name = "hint_flip_to_stop">Zastavte otočením zařízení obrazovkou dolů</string>
     <string name = "back_suppressed_by_kiosk">"Ukončení blokováno (režim kiosku povolen) "</string>
     <string name = "notificationChannelPlayback">Přehrávání zvuku</string>
@@ -70,4 +70,6 @@
     <string name = "samplesDownloadProgressTitle">Stahování…</string>
     <string name = "samplesDownloadNotificationTitle">Ukázky audioknih pro Homer Player</string>
     <string name="playback_loading">Načítám knihu…</string>
+    <string name="button_back">Zpět</string>
+    <string name="file_select_title">Zvolte soubor</string>
 </resources>

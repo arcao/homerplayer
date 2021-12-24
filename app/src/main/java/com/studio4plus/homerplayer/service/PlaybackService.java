@@ -136,6 +136,11 @@ public class PlaybackService
         playbackInProgress.resumeFromRewind();
     }
 
+    public void selectFile(int fileIndex) {
+        Preconditions.checkNotNull(playbackInProgress);
+        playbackInProgress.selectFile(fileIndex);
+    }
+
     public long getCurrentTotalPositionMs() {
         Preconditions.checkNotNull(playbackInProgress);
         return playbackInProgress.getCurrentTotalPositionMs();
@@ -323,6 +328,14 @@ public class PlaybackService
         public void onPlayerReleased() {
             handler.removeCallbacks(updatePosition);
             PlaybackService.this.onPlayerReleased();
+        }
+
+        public void selectFile(int fileIndex) {
+            audioBook.seekToFileStart(fileIndex);
+            AudioBook.Position position = audioBook.getLastPosition();
+            controller.start(position.file, 0);
+            handler.postDelayed(updatePosition, UPDATE_TIME_MS);
+            resetSleepTimer();
         }
     }
 
