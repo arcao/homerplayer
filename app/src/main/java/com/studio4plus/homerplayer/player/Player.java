@@ -5,25 +5,25 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import androidx.annotation.NonNull;
+
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Player.State;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.common.base.Preconditions;
 import com.studio4plus.homerplayer.events.PlaybackErrorEvent;
 
 import java.io.EOFException;
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,14 +31,14 @@ import de.greenrobot.event.EventBus;
 
 public class Player {
 
-    private final SimpleExoPlayer exoPlayer;
+    private final ExoPlayer exoPlayer;
     private final EventBus eventBus;
     private ProgressiveMediaSource.Factory mediaSourceFactory;
 
     private float playbackSpeed = 1.0f;
 
     public Player(Context context, EventBus eventBus) {
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
+        exoPlayer = new ExoPlayer.Builder(context).build();
         this.eventBus = eventBus;
     }
 
@@ -62,15 +62,16 @@ public class Player {
 
     private void prepareAudioFile(File file, long startPositionMs) {
         Uri fileUri = Uri.fromFile(file);
-        MediaSource source = getExtractorMediaSourceFactory().createMediaSource(fileUri);
+        MediaSource source = getExtractorMediaSourceFactory().createMediaSource(new MediaItem.Builder().setUri(fileUri).build());
 
         exoPlayer.seekTo(startPositionMs);
-        exoPlayer.prepare(source, false, true);
+        exoPlayer.setMediaSource(source, false);
+        exoPlayer.prepare();
     }
 
     private ProgressiveMediaSource.Factory getExtractorMediaSourceFactory() {
         if (mediaSourceFactory == null) {
-            DataSource.Factory dataSourceFactory = new FileDataSourceFactory();
+            DataSource.Factory dataSourceFactory = new FileDataSource.Factory();
             DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             extractorsFactory.setMp3ExtractorFlags(Mp3Extractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING);
             mediaSourceFactory = new ProgressiveMediaSource.Factory(
@@ -80,14 +81,14 @@ public class Player {
     }
 
     private class PlaybackControllerImpl implements
-            com.google.android.exoplayer2.Player.EventListener,
+            com.google.android.exoplayer2.Player.Listener,
             PlaybackController {
 
+        private final Handler handler;
         private File currentFile;
         private Observer observer;
-        private int lastPlaybackState;
-        private Handler handler;
         private final Runnable updateProgressTask = this::updateProgress;
+        private int lastPlaybackState;
 
         private PlaybackControllerImpl(Handler handler) {
             this.handler = handler;
@@ -134,12 +135,12 @@ public class Player {
         }
 
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        public void onPlaybackStateChanged(@State int playbackState) {
             if (playbackState == lastPlaybackState)
                 return;
             lastPlaybackState = playbackState;
 
-            switch(playbackState) {
+            switch (playbackState) {
                 case com.google.android.exoplayer2.Player.STATE_READY:
                     observer.onDuration(currentFile, exoPlayer.getDuration());
                     updateProgress();
@@ -154,24 +155,25 @@ public class Player {
                     exoPlayer.removeListener(this);
                     observer.onPlayerReleased();
                     break;
+                case com.google.android.exoplayer2.Player.STATE_BUFFERING:
+                    break;
             }
         }
 
         @Override
-        public void onPlayerError(ExoPlaybackException error) {
+        public void onPlayerError(@NonNull PlaybackException error) {
             eventBus.post(new PlaybackErrorEvent(
-                    error.getMessage(),
+                    error.getMessage() == null ? "" : error.getMessage(),
                     exoPlayer.getDuration(),
                     exoPlayer.getCurrentPosition(),
                     getFormatDescription()));
-            if (error.type == ExoPlaybackException.TYPE_SOURCE) {
-                IOException exception = error.getSourceException();
-                if (exception instanceof FileDataSource.FileDataSourceException
-                        && exception.getCause() instanceof EOFException) {
-                    // May happen with files that have seeking or length information.
-                    observer.onPlaybackEnded();
-                    return;
-                }
+
+            Throwable exception = error.getCause();
+            if (exception instanceof FileDataSource.FileDataSourceException
+                    && exception.getCause() instanceof EOFException) {
+                // May happen with files that have seeking or length information.
+                observer.onPlaybackEnded();
+                return;
             }
             observer.onPlaybackError(currentFile);
         }
@@ -203,7 +205,7 @@ public class Player {
     }
 
     private class DurationQueryControllerImpl implements
-            com.google.android.exoplayer2.Player.EventListener,
+            com.google.android.exoplayer2.Player.Listener,
             DurationQueryController {
 
         private final Iterator<File> iterator;
@@ -231,8 +233,8 @@ public class Player {
         }
 
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            switch(playbackState) {
+        public void onPlaybackStateChanged(@State int playbackState) {
+            switch (playbackState) {
                 case com.google.android.exoplayer2.Player.STATE_READY:
                     observer.onDuration(currentFile, exoPlayer.getDuration());
                     boolean hasNext = processNextFile();
@@ -248,11 +250,14 @@ public class Player {
                         observer.onFinished();
                     }
                     break;
+                case com.google.android.exoplayer2.Player.STATE_BUFFERING:
+                case com.google.android.exoplayer2.Player.STATE_ENDED:
+                    break;
             }
         }
 
         @Override
-        public void onPlayerError(ExoPlaybackException error) {
+        public void onPlayerError(@NonNull PlaybackException error) {
             releaseOnIdle = true;
             observer.onPlayerError(currentFile);
         }

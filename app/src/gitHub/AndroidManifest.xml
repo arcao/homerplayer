@@ -5,6 +5,7 @@
     <application>
         <receiver android:name=".HomerPlayerDeviceAdmin"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true"
             tools:node="merge"/>
     </application>
 </manifest>
